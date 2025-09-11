@@ -153,6 +153,37 @@ document.addEventListener('DOMContentLoaded', () => {
     if (resultsVisual) counterObserver.observe(resultsVisual);
 });
 
+// Spline viewer loading
+document.addEventListener('DOMContentLoaded', () => {
+    const splineViewer = document.querySelector('spline-viewer');
+    if (splineViewer) {
+        splineViewer.addEventListener('load', () => {
+            console.log('Spline 3D scene loaded successfully');
+        });
+        
+        splineViewer.addEventListener('error', (e) => {
+            console.error('Error loading Spline scene:', e);
+            // Fallback to a simple graphic if Spline fails to load
+            const heroSpline = document.querySelector('.hero-spline');
+            if (heroSpline) {
+                heroSpline.innerHTML = `
+                    <div class="hero-graphic">
+                        <div class="chart-container">
+                            <div class="chart-bar" style="height: 60%;"></div>
+                            <div class="chart-bar" style="height: 80%;"></div>
+                            <div class="chart-bar" style="height: 100%;"></div>
+                            <div class="chart-bar" style="height: 120%;"></div>
+                        </div>
+                        <div class="growth-arrow">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+    }
+});
+
 // Add loading animation
 window.addEventListener('load', () => {
     document.body.style.opacity = '1';
