@@ -159,6 +159,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if (splineViewer) {
         splineViewer.addEventListener('load', () => {
             console.log('Spline 3D scene loaded successfully');
+            // Hide Spline UI elements
+            const style = document.createElement('style');
+            style.textContent = `
+                spline-viewer::part(ui) {
+                    display: none !important;
+                }
+                spline-viewer::part(loading) {
+                    display: none !important;
+                }
+                .spline-ui {
+                    display: none !important;
+                }
+                [data-spline-ui] {
+                    display: none !important;
+                }
+            `;
+            document.head.appendChild(style);
         });
         
         splineViewer.addEventListener('error', (e) => {
