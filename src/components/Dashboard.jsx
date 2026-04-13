@@ -8,6 +8,7 @@ export default function Dashboard({ session }) {
   const [loading, setLoading] = useState(true);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [updatedInvoiceId, setUpdatedInvoiceId] = useState(null);
+  const [activeTab, setActiveTab] = useState('overview');
 
   const fetchInvoices = async () => {
     try {
@@ -75,11 +76,19 @@ export default function Dashboard({ session }) {
         </div>
         
         <div className="nav-menu">
-          <div className="nav-item active">
+          <div 
+            className={`nav-item ${activeTab === 'overview' ? 'active' : ''}`}
+            onClick={() => setActiveTab('overview')}
+            style={{ cursor: 'pointer' }}
+          >
             <LayoutDashboard size={20} />
             Overview
           </div>
-          <div className="nav-item">
+          <div 
+            className={`nav-item ${activeTab === 'processing' ? 'active' : ''}`}
+            onClick={() => setActiveTab('processing')}
+            style={{ cursor: 'pointer' }}
+          >
             <FileText size={20} />
             Processing
           </div>
@@ -113,14 +122,26 @@ export default function Dashboard({ session }) {
               <Clock className="loading-spinner" size={32} />
               <h3 style={{ marginTop: '1rem' }}>Loading invoices...</h3>
             </div>
-          ) : invoices.length === 0 ? (
-            <div className="empty-state">
-              <FileText size={48} />
-              <h3 style={{ fontSize: '1.25rem', marginTop: '1rem', color: 'var(--text-primary)' }}>No invoices yet</h3>
-              <p>Upload invoices via the Google Sheets add-on to see them here.</p>
-            </div>
-          ) : (
-            invoices.map((inv) => {
+          ) : (() => {
+            const displayInvoices = activeTab === 'processing' 
+              ? invoices.filter(inv => inv.status === 'processing') 
+              : invoices;
+
+            if (displayInvoices.length === 0) {
+              return (
+                <div className="empty-state">
+                  <FileText size={48} />
+                  <h3 style={{ fontSize: '1.25rem', marginTop: '1rem', color: 'var(--text-primary)' }}>No invoices found</h3>
+                  <p>
+                    {activeTab === 'processing' 
+                      ? 'There are no invoices currently processing.' 
+                      : 'Upload invoices via the Google Sheets add-on to see them here.'}
+                  </p>
+                </div>
+              );
+            }
+
+            return displayInvoices.map((inv) => {
               const data = inv.invoice_data?.[0];
               const isUpdated = inv.id === updatedInvoiceId;
 
@@ -162,8 +183,8 @@ export default function Dashboard({ session }) {
                   </div>
                 </div>
               );
-            })
-          )}
+            });
+          })()}
         </div>
       </div>
 
